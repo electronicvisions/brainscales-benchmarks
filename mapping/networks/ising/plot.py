@@ -5,24 +5,28 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import json
+import glob
 
-jsonfiles = [
-				(20, "ising_network_l20_d2_b1_n20_k5_p1_w33_results.json"),
-				(40, "ising_network_l40_d2_b1_n20_k5_p1_w33_results.json"),
-				(80, "ising_network_l80_d2_b1_n20_k5_p1_w33_results.json"),
-			]
+from collections import defaultdict
 
-plotdata = []
-for ls, jsfile in jsonfiles:
+
+plotdata = defaultdict(list)
+for jsfile in glob.glob('*.json'):
+	if jsfile.startswith("benchmarks"):
+		continue
+	name, parameters = jsfile.split("_network_")
 	with open(jsfile, 'r') as f:
 		data = json.load(f)
+		nneurons = data['results'][3]['value']
 		totsyn = data['results'][2]['value']
 		losssyn = data['results'][4]['value']
 		lossl1syn = data['results'][5]['value']
-		plotdata.append([ls, losssyn/float(totsyn), lossl1syn/float(totsyn)])
+		plotdata[name].append([nneurons, losssyn/float(totsyn), lossl1syn/float(totsyn)])
 
-plotdata = np.array(plotdata)
+for name in plotdata:
+	pd = np.array(plotdata[name])
 
-plt.plot(plotdata[:,0], plotdata[:, 1], label='synapseloss')
-plt.plot(plotdata[:,0], plotdata[:, 2], label='synapsel1loss')
-plt.savefig('ising_loss.pdf')
+	plt.plot(pd[:,0], pd[:, 1], label='synapseloss')
+	plt.plot(pd[:,0], pd[:, 2], label='synapsel1loss')
+	plt.legend()
+	plt.savefig('{}_loss.pdf'.format(name))

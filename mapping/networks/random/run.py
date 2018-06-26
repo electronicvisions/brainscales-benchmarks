@@ -93,7 +93,7 @@ def main():
         ]
     }
 
-    with open("random_N{}_p{}_results.json".format(args.N, args.prob), 'w') as outfile:
+    with open("{}_{}_results.json".format(result["model"], result["task"]), 'w') as outfile:
         json.dump(result, outfile)
 
 if __name__ == '__main__':

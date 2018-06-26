@@ -26,7 +26,7 @@ for jsfile in glob.glob('*.json'):
 for name in plotdata:
 	pd = np.array(plotdata[name])
 
-	plt.plot(pd[:,0], pd[:, 1], label='synapseloss')
-	plt.plot(pd[:,0], pd[:, 2], label='synapsel1loss')
+	plt.plot(pd[:,0], pd[:, 1], 'x', label='synapseloss')
+	plt.plot(pd[:,0], pd[:, 2], 'x', label='synapsel1loss')
 	plt.legend()
 	plt.savefig('{}_loss.pdf'.format(name))

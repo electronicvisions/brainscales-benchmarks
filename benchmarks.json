@@ -25,6 +25,18 @@
         "command": "mapping/networks/ising/run.py --dimension 2 --linearsize 60"
       },
       {
+        "name": "ising_network_d2_l65",
+        "command": "mapping/networks/ising/run.py --dimension 2 --linearsize 65"
+      },
+      {
+        "name": "ising_network_d2_l70",
+        "command": "mapping/networks/ising/run.py --dimension 2 --linearsize 70"
+      },
+      {
+        "name": "ising_network_d2_l75",
+        "command": "mapping/networks/ising/run.py --dimension 2 --linearsize 75"
+      },
+      {
         "name": "ising_network_d2_l80",
         "command": "mapping/networks/ising/run.py --dimension 2 --linearsize 80"
       },

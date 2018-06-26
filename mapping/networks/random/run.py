@@ -43,23 +43,43 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--prob', default=0.1, type=float)
     parser.add_argument('--N',  default=5000, type=int)
+    parser.add_argument('--shuffle_switches', type=bool, default=True)
+    parser.add_argument('--name',  default="random_network", type=str)
 
     args = parser.parse_args()
+
+    taskname = "N{}_p{}".format(args.N, args.prob)
 
     marocco = pymarocco.PyMarocco()
     marocco.continue_despite_synapse_loss = True
     marocco.calib_backend = pymarocco.PyMarocco.CalibBackend.Default
+    marocco.calib_path = "/wang/data/calibration/brainscales/default"
+    marocco.defects_path = "/wang/data/calibration/brainscales/default"
+    marocco.l1_routing.shuffle_switches(args.shuffle_switches)
+    marocco.persist = "results_{}_{}.xml.gz".format(args.name, taskname)
 
     start = datetime.now()
     r = RandomNetwork(args.N, args.prob, marocco)
     r.build()
     mid = datetime.now()
-    r.run()
+    try:
+        r.run()
+        totsynapses = marocco.stats.getSynapses()
+        totneurons = marocco.stats.getNumNeurons()
+        lostsynapses = marocco.stats.getSynapseLoss()
+        lostsynapsesl1 = marocco.stats.getSynapseLossAfterL1Routing()
+    except RuntimeError:
+        # couldn't place all populations
+        totsynapses = 1
+        totneurons = 1
+        lostsynapses = 1
+        lostsynapsesl1 = 1
+
     end = datetime.now()
 
     result = {
-        "model" : "random_network",
-        "task" : "N{}_p{}".format(args.N, args.prob),
+        "model" : args.name,
+        "task" : taskname,
         "timestamp" : datetime.now().isoformat(),
         "results" : [
             {"type" : "performance",
@@ -76,24 +96,24 @@ def main():
          },
             {"type" : "performance",
              "name" : "synapses",
-             "value" : marocco.stats.getSynapses()
+             "value" : totsynapses
          },
             {"type" : "performance",
              "name" : "neurons",
-             "value" : marocco.stats.getNumNeurons()
+             "value" : totneurons
          },
             {"type" : "performance",
              "name" : "synapse_loss",
-             "value" : marocco.stats.getSynapseLoss()
+             "value" : lostsynapses
          },
             {"type" : "performance",
              "name" : "synapse_loss_after_l1",
-             "value" : marocco.stats.getSynapseLossAfterL1Routing()
+             "value" : lostsynapsesl1
          }
         ]
     }
 
-    with open("random_N{}_p{}_results.json".format(args.N, args.prob), 'w') as outfile:
+    with open("{}_{}_results.json".format(result["model"], result["task"]), 'w') as outfile:
         json.dump(result, outfile)
 
 if __name__ == '__main__':

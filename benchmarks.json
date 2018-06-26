@@ -1,18 +1,41 @@
 [
   {
     "model": {
-      "name": "random_network",
-      "description": "mapping a random network on the BrainScaleS wafer"
+      "name": "random10_network",
+      "description": "mapping a random network with low connectivity on the BrainScaleS wafer"
     },
-    "tasks": [
-      {
-        "name": "random_network_N100_p0.1",
-        "command": "mapping/networks/random/run.py --N 100 --prob 0.1"
-      },
-      {
-        "name": "random_network_N1000_p0.1",
-        "command": "mapping/networks/random/run.py --N 1000 --prob 0.1"
+    "tasks": {
+      "command": "mapping/networks/random/run.py --prob 0.1",
+      "arguments": {
+        "--N": [100, 200, 400, 800, 1600, 3200],
+        "--shuffle_switches": [false, true]
       }
-    ]
+    }
+  },
+  {
+    "model": {
+      "name": "random30_network",
+      "description": "mapping a random network with medium connectivity on the BrainScaleS wafer"
+    },
+    "tasks": {
+      "command": "mapping/networks/random/run.py --prob 0.3",
+      "arguments": {
+        "--N": [100, 200, 400, 800, 1600, 3200],
+        "--shuffle_switches": [false, true]
+      }
+    }
+  },
+  {
+    "model": {
+      "name": "ising2d_network",
+      "description": "mapping a 2d-Ising network on the BrainScaleS wafer"
+    },
+    "tasks": {
+      "command": "mapping/networks/ising/run.py --dimension 2",
+      "arguments": {
+        "--linearsize": [20, 40, 60, 70, 72, 74, 76, 78, 80, 100, 120, 140, 160, 180, 200],
+        "--shuffle_switches": [false, true]
+      }
+    }
   }
 ]

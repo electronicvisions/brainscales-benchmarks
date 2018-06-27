@@ -11,7 +11,7 @@ from collections import defaultdict
 
 
 plotdata = defaultdict(list)
-data = defaultdict(defaultdict(list))
+data ={}
 
 xkeys = ['neurons', 'synapses']
 ykeys = ['synapse_loss', 'synapse_loss_after_l1']
@@ -20,6 +20,7 @@ for jsfile in glob.glob('*.json'):
     if jsfile.startswith("benchmarks"):
         continue
     name, parameters = jsfile.split("_network_")
+    data[name] = defaultdict(list)
     with open(jsfile, 'r') as f:
         jsondata = json.load(f)
         for jd in jsondata:

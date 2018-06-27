@@ -10,25 +10,28 @@ import glob
 from collections import defaultdict
 
 
-plotdata = defaultdict(list)
 data ={}
 
 xkeys = ['neurons', 'synapses']
 ykeys = ['synapse_loss', 'synapse_loss_after_l1']
 
-for jsfile in glob.glob('*.json'):
+for jsfile in glob.glob('brainscales-benchmarks/*.json'):
     if jsfile.startswith("benchmarks"):
         continue
     name, parameters = jsfile.split("_network_")
-    data[name] = defaultdict(list)
+    name = name.split('/')[1]
+    if name not in data:
+        data[name] = defaultdict(list)
     with open(jsfile, 'r') as f:
         jsondata = json.load(f)
-        for jd in jsondata:
-            if jd['name'] in xkeys + ykeys:
-                data[name][jd['name']].append(jd['value'])
+        for jd in jsondata['results']:
+            if jd['name'] in (xkeys + ykeys):
+                data[name][jd['name']].append(float(jd['value']))
 
+plotdata = {}
 for name in data.keys():
-    for key in interesting_keys:
+    plotdata[name] = {}
+    for key in (xkeys + ykeys):
         plotdata[name][key] = np.array(data[name][key])
 
     for key in ykeys:
@@ -36,7 +39,7 @@ for name in data.keys():
 
 
 for name in plotdata:
-    pd = np.array(plotdata[name])
+    pd = plotdata[name]
 
     fig = plt.figure()
     ax = fig.add_subplot(111)

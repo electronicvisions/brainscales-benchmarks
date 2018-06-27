@@ -6,13 +6,38 @@
     },
     "tasks": [
       {
-        "name": "random_network_N100_p0.1",
+        "name": "random10_network_N100_p0.1",
         "command": "mapping/networks/random/run.py --N 100 --prob 0.1"
       },
       {
-        "name": "random_network_N1000_p0.1",
+        "name": "random10_network_N300_p0.1",
+        "command": "mapping/networks/random/run.py --N 300 --prob 0.1"
+      },
+      {
+        "name": "random10_network_N1000_p0.1",
         "command": "mapping/networks/random/run.py --N 1000 --prob 0.1"
-      },{
+      },
+      {
+        "name": "random10_network_N3000_p0.1",
+        "command": "mapping/networks/random/run.py --N 3000 --prob 0.1"
+      },
+      {
+        "name": "random30_network_N100_p0.3",
+        "command": "mapping/networks/random/run.py --N 100 --prob 0.3"
+      },
+      {
+        "name": "random30_network_N300_p0.3",
+        "command": "mapping/networks/random/run.py --N 300 --prob 0.3"
+      },
+      {
+        "name": "random30_network_N1000_p0.3",
+        "command": "mapping/networks/random/run.py --N 1000 --prob 0.3"
+      },
+      {
+        "name": "random30_network_N3000_p0.3",
+        "command": "mapping/networks/random/run.py --N 3000 --prob 0.3"
+      },
+      {
         "name": "ising_network_d2_l20",
         "command": "mapping/networks/ising/run.py --dimension 2 --linearsize 20"
       },

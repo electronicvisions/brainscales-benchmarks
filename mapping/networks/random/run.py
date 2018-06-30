@@ -2,6 +2,7 @@
 
 import argparse
 from datetime import datetime
+import distutils.util
 import json
 
 import pyhmf as pynn
@@ -43,12 +44,14 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--prob', default=0.1, type=float)
     parser.add_argument('--N',  default=5000, type=int)
-    parser.add_argument('--shuffle_switches', type=bool, default=True)
+    parser.add_argument('--shuffle_switches', dest='shuffle_switches',
+                        type=lambda x:bool(distutils.util.strtobool(x)),
+                        default='false')
     parser.add_argument('--name',  default="random_network", type=str)
 
     args = parser.parse_args()
 
-    taskname = "N{}_p{}".format(args.N, args.prob)
+    taskname = "N{}_p{}_s{}".format(args.N, args.prob, args.shuffle_switches)
 
     marocco = pymarocco.PyMarocco()
     marocco.continue_despite_synapse_loss = True

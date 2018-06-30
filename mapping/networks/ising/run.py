@@ -2,6 +2,7 @@
 
 import argparse
 from datetime import datetime
+import distutils.util
 import json
 
 import pyhmf as pynn
@@ -103,18 +104,21 @@ def main():
     parser.add_argument('--sourcerate', '-r', type=float, default=20.)
     parser.add_argument('--duplicates', '-p', type=int, default=1)
     parser.add_argument('--wafer', '-w', type=int, default=33)
-    parser.add_argument('--shuffle_switches', type=bool, default=True)
+    parser.add_argument('--shuffle_switches', dest='shuffle_switches',
+                        type=lambda x:bool(distutils.util.strtobool(x)),
+                        default='false')
     parser.add_argument('--name', type=str, default='ising_network')
 
     args = parser.parse_args()
 
-    taskname = "l{}_d{}_b{}_n{}_k{}_p{}_w{}".format(args.linearsize,
+    taskname = "l{}_d{}_b{}_n{}_k{}_p{}_w{}_s{}".format(args.linearsize,
                                                   args.dimension,
                                                   args.nbiasneurons,
                                                   args.nsources,
                                                   args.ksources,
                                                   args.duplicates,
-                                                  args.wafer)
+                                                  args.wafer,
+                                                  args.shuffle_switches)
 
     marocco = pymarocco.PyMarocco()
     marocco.continue_despite_synapse_loss = True

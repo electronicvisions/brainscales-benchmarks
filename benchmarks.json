@@ -37,5 +37,18 @@
         "--shuffle_switches": [false, true]
       }
     }
+  },
+  {
+    "model": {
+      "name": "fullyVisibleBm_network",
+      "description": "mapping the skeleton of a fully visible Boltzmann machine without the noise sources"
+    },
+    "tasks": {
+      "command": "mapping/networks/fullyVisibleBM/run.py",
+      "arguments": {
+        "--N": [10, 100, 200, 500, 750, 1000, 1500, 2000],
+        "--shuffle_switches": [false, true]
+      }
+    }
   }
 ]

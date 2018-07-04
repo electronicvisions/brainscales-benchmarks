@@ -50,5 +50,18 @@
         "--shuffle_switches": [false, true]
       }
     }
+  },
+  {
+    "model": {
+      "name": "rbm_network",
+      "description": "mapping the skeleton of a restricted Boltzmann machine without the noise sources. The hidden layer and the visible layer are of the same size N."
+    },
+    "tasks": {
+      "command": "mapping/networks/rbm/run.py",
+      "arguments": {
+        "--N": [10, 100, 200, 500, 750, 1000, 1250],
+        "--shuffle_switches": [false, true]
+      }
+    }
   }
 ]

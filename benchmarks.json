@@ -63,5 +63,18 @@
         "--shuffle_switches": [false, true]
       }
     }
+  },
+  {
+    "model": {
+      "name": "pfeilsNoise_network",
+      "description": "mapping the skeleton of a noise network following Pfeil et al. 2016. N inhibitory neuons are connected to themselves exculiding direct self-connections with K presynaptic partners each. The K = 20 is taken from the sampling paper, where a pfeils noise network drives a sampling Restricted Boltzmann Machine."
+    },
+    "tasks": {
+      "command": "mapping/networks/pfeilsNoise/run.py --K 20",
+      "arguments": {
+        "--N": [10, 100, 200, 500, 750, 1000, 1250],
+        "--shuffle_switches": [false, true]
+      }
+    }
   }
 ]

@@ -76,5 +76,18 @@
         "--shuffle_switches": [false, true]
       }
     }
+  },
+  {
+    "model": {
+      "name": "rbmLocalReceptiveFields_network",
+      "description": "Mapping the skeleton of a restricted Boltzmann machine without the noise sources. Each neuron in the hidden layer receives only a local receptive field from the visible layer. The default case is inpired by MNIST: 10 neurons in the label layer; and Pedroni et al (2016) has found optimal generative properties for mnist with a local receptrive field of 8*8 on the TrueNorth."
+    },
+    "tasks": {
+      "command": "mapping/networks/rbmLocalReceptive/run.py --K 8 --L 10",
+      "arguments": {
+        "--N": [10, 12, 14, 18, 22, 26, 28, 30, 35, 40, 45],
+        "--shuffle_switches": [false, true]
+      }
+    }
   }
 ]

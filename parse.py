@@ -57,7 +57,7 @@ for item in benchmarks:
         argtuples += [(at, argnames, basecommand, name) for at in it.product(*argvalues)]
     else:
         for argtuple in it.product(*argvalues):
-            run(argtuple, argnames, basecommand, name, False)
+            run((argtuple, argnames, basecommand, name), False)
 
 if args.multiprocessing:
     pool.map(run, argtuples)

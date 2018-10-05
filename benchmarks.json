@@ -7,8 +7,7 @@
     "tasks": {
       "command": "mapping/networks/random/run.py --prob 0.1",
       "arguments": {
-        "--N": [100, 200, 400, 800, 1600, 3200],
-        "--shuffle_switches": [false, true]
+        "--N": [100, 200, 400, 800, 1600, 3200]
       }
     }
   },
@@ -20,8 +19,7 @@
     "tasks": {
       "command": "mapping/networks/random/run.py --prob 0.3",
       "arguments": {
-        "--N": [100, 200, 400, 800, 1600, 3200],
-        "--shuffle_switches": [false, true]
+        "--N": [100, 200, 400, 800, 1600, 3200]
       }
     }
   },
@@ -33,8 +31,7 @@
     "tasks": {
       "command": "mapping/networks/ising/run.py --dimension 2",
       "arguments": {
-        "--linearsize": [20, 40, 60, 70, 72, 74, 76, 78, 80, 100, 120, 140, 150, 160],
-        "--shuffle_switches": [false, true]
+        "--linearsize": [20, 40, 60, 70, 72, 74, 76, 78, 80, 100, 120, 140, 150, 160]
       }
     }
   },
@@ -46,8 +43,7 @@
     "tasks": {
       "command": "mapping/networks/fullyVisibleBM/run.py",
       "arguments": {
-        "--N": [10, 100, 200, 500, 750, 1000, 1500, 2000],
-        "--shuffle_switches": [false, true]
+        "--N": [10, 100, 200, 500, 750, 1000, 1500, 2000]
       }
     }
   },
@@ -59,8 +55,7 @@
     "tasks": {
       "command": "mapping/networks/rbm/run.py",
       "arguments": {
-        "--N": [10, 100, 200, 500, 750, 1000, 1250],
-        "--shuffle_switches": [false, true]
+        "--N": [10, 100, 200, 500, 750, 1000, 1250]
       }
     }
   },
@@ -72,8 +67,7 @@
     "tasks": {
       "command": "mapping/networks/pfeilsNoise/run.py --K 20",
       "arguments": {
-        "--N": [10, 100, 200, 500, 750, 1000, 1250],
-        "--shuffle_switches": [false, true]
+        "--N": [10, 100, 200, 500, 750, 1000, 1250]
       }
     }
   },
@@ -85,8 +79,7 @@
     "tasks": {
       "command": "mapping/networks/rbmLocalReceptive/run.py --K 8 --L 10",
       "arguments": {
-        "--N": [10, 12, 14, 18, 22, 26, 28, 30, 35, 40, 45],
-        "--shuffle_switches": [false, true]
+        "--N": [10, 12, 14, 18, 22, 26, 28, 30, 35, 40, 45]
       }
     }
   }

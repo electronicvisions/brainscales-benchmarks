@@ -2,7 +2,6 @@
 
 import argparse
 from datetime import datetime
-import distutils.util
 import json
 
 import pyhmf as pynn
@@ -63,9 +62,6 @@ def main():
                         help='The number of the neurons in the visible layer')
     parser.add_argument('--Nhidden',  default=0, type=int,
                         help='The number of the neurons in the hidden layer. If 0 or not specified then the number of hidden neurons equals the number of visible neurons.')
-    parser.add_argument('--shuffle_switches', dest='shuffle_switches',
-                        type=lambda x:bool(distutils.util.strtobool(x)),
-                        default='false')
     parser.add_argument('--name',  default="fullyVisibleBm_network", type=str)
 
     args = parser.parse_args()
@@ -74,16 +70,14 @@ def main():
     if args.Nhidden == 0:
         args.Nhidden = args.N
 
-    taskname = "Nvisible{}_Nhidden{}_s{}".format(args.N,
-                                                 args.Nhidden,
-                                                 args.shuffle_switches)
+    taskname = "Nvisible{}_Nhidden{}".format(args.N,
+                                                 args.Nhidden)
 
     marocco = pymarocco.PyMarocco()
     marocco.continue_despite_synapse_loss = True
     marocco.calib_backend = pymarocco.PyMarocco.CalibBackend.Default
     marocco.calib_path = "/wang/data/calibration/brainscales/default"
     marocco.defects_path = "/wang/data/calibration/brainscales/default"
-    marocco.l1_routing.shuffle_switches(args.shuffle_switches)
     marocco.persist = "results_{}_{}.xml.gz".format(args.name, taskname)
 
     start = datetime.now()

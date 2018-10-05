@@ -2,7 +2,6 @@
 
 import argparse
 from datetime import datetime
-import distutils.util
 import json
 import sys
 
@@ -115,9 +114,6 @@ def main():
                         K has to be larger than N.')
     parser.add_argument('--L',  default=10, type=int,
                         help='Number of neurons in the label layer.')
-    parser.add_argument('--shuffle_switches', dest='shuffle_switches',
-                        type=lambda x:bool(distutils.util.strtobool(x)),
-                        default='false')
     parser.add_argument('--name',  default="fullyVisibleBm_network", type=str)
 
     args = parser.parse_args()
@@ -130,17 +126,15 @@ def main():
         	 	  of the local receptive\
         	 	  fields!'.format(args.N, args.K))
 
-    taskname = "N{}_K{}_L{}_s{}".format(args.N,
-                                        args.K,
-                                        args.L,
-                                        args.shuffle_switches)
+    taskname = "N{}_K{}_L{}".format(args.N,
+                                    args.K,
+                                    args.L)
 
     marocco = pymarocco.PyMarocco()
     marocco.continue_despite_synapse_loss = True
     marocco.calib_backend = pymarocco.PyMarocco.CalibBackend.Default
     marocco.calib_path = "/wang/data/calibration/brainscales/default"
     marocco.defects_path = "/wang/data/calibration/brainscales/default"
-    marocco.l1_routing.shuffle_switches(args.shuffle_switches)
     marocco.persist = "results_{}_{}.xml.gz".format(args.name, taskname)
 
     start = datetime.now()

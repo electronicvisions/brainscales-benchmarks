@@ -2,7 +2,6 @@
 
 import argparse
 from datetime import datetime
-import distutils.util
 import json
 
 import pyhmf as pynn
@@ -47,21 +46,17 @@ class fullyVisibleBmNetwork(object):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--N',  default=5000, type=int)
-    parser.add_argument('--shuffle_switches', dest='shuffle_switches',
-                        type=lambda x:bool(distutils.util.strtobool(x)),
-                        default='false')
     parser.add_argument('--name',  default="fullyVisibleBm_network", type=str)
 
     args = parser.parse_args()
 
-    taskname = "N{}_s{}".format(args.N, args.shuffle_switches)
+    taskname = "N{}".format(args.N)
 
     marocco = pymarocco.PyMarocco()
     marocco.continue_despite_synapse_loss = True
     marocco.calib_backend = pymarocco.PyMarocco.CalibBackend.Default
     marocco.calib_path = "/wang/data/calibration/brainscales/default"
     marocco.defects_path = "/wang/data/calibration/brainscales/default"
-    marocco.l1_routing.shuffle_switches(args.shuffle_switches)
     marocco.persist = "results_{}_{}.xml.gz".format(args.name, taskname)
 
     start = datetime.now()

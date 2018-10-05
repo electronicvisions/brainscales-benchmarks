@@ -50,21 +50,17 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--K', default=20, type=int)
     parser.add_argument('--N',  default=500, type=int)
-    parser.add_argument('--shuffle_switches', dest='shuffle_switches',
-                        type=lambda x:bool(distutils.util.strtobool(x)),
-                        default='false')
     parser.add_argument('--name',  default="random_network", type=str)
 
     args = parser.parse_args()
 
-    taskname = "N{}_K{}_s{}".format(args.N, args.K, args.shuffle_switches)
+    taskname = "N{}_K{}".format(args.N, args.K)
 
     marocco = pymarocco.PyMarocco()
     marocco.continue_despite_synapse_loss = True
     marocco.calib_backend = pymarocco.PyMarocco.CalibBackend.Default
     marocco.calib_path = "/wang/data/calibration/brainscales/default"
     marocco.defects_path = "/wang/data/calibration/brainscales/default"
-    marocco.l1_routing.shuffle_switches(args.shuffle_switches)
     marocco.persist = "results_{}_{}.xml.gz".format(args.name, taskname)
 
     start = datetime.now()

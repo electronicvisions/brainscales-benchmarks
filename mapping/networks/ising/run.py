@@ -11,17 +11,28 @@ import pymarocco
 from pysthal.command_line_util import init_logger
 init_logger("WARN", [])
 
+
 class IsingNetwork(object):
-    def __init__(self, marocco, linearsize, dimension, nbiasneurons,
-                 nsources, ksources, duplicates, sourcerate,
-                 model=pynn.EIF_cond_exp_isfa_ista):
+    def __init__(self, marocco, linearsize, dimension, kbiasneurons,
+                 nbiasneurons, nsources, ksources, duplicates, sourcerate,
+                 model=pynn.IF_cond_exp):
+        # size of the edge of the lattice
         self.linearsize = linearsize
+        # dimension of the lattice
         self.dimension = dimension
+        # number of bias neurons projecting onto each network neuron
+        # (might be needed for scaling)
+        self.kbiasneurons = kbiasneurons
+        # total number of bias neurons, must be an integer multiple of k
+        # should help synapse loss
         self.nbiasneurons = nbiasneurons
+        # size of the noise network
         self.nsources = nsources
+        # number of excitatory and inhibitory source projecting onto each
+        # neuron
         self.ksources = ksources
+        # number of connections between neighboring neurons
         self.duplicates = duplicates
-        self.sourcerate = sourcerate
         self.model = model
         self.marocco = marocco
 
@@ -29,51 +40,56 @@ class IsingNetwork(object):
 
     def build(self):
         weights  = self._create_nn_unit_weights(self.linearsize,
-                self.dimension)
+                                                self.dimension)
 
         self.neurons = [pynn.Population(1, self.model)
-                            for _ in range(self.linearsize ** self.dimension)]
-        self.exsources = pynn.Population(self.nsources, pynn.SpikeSourcePoisson,
-                                         {'rate': self.sourcerate})
-        self.insources = pynn.Population(self.nsources, pynn.SpikeSourcePoisson,
-                                         {'rate': self.sourcerate})
+                        for _ in range(self.linearsize ** self.dimension)]
+        self.noise = pynn.Population(self.nsources, pynn.IF_cond_exp)
         self.biasneurons = pynn.Population(self.nbiasneurons, self.model)
+
+        connector = pynn.FixedNumberPreConnector(
+                n=30,
+                weights=0.3,
+                allow_self_connections=False)
+        pynn.Projection(self.noise,
+                        self.noise,
+                        connector,
+                        target='inhibitory')
 
         connector = pynn.FixedNumberPreConnector(
                 n=self.ksources,
                 weights=0.3)
-        proj = pynn.Projection(
-                self.exsources,
+        pynn.Projection(
+                self.noise,
                 self.neurons,
                 connector,
                 target='excitatory',
                 rng=pynn.NativeRNG(42))
-        proj = pynn.Projection(
-                self.exsources,
+        pynn.Projection(
+                self.noise,
                 self.neurons,
                 connector,
                 target='inhibitory',
-                rng=pynn.NativeRNG(42))
+                rng=pynn.NativeRNG(43))
 
         connector = pynn.FixedNumberPreConnector(
-                n=self.nbiasneurons,
+                n=self.kbiasneurons,
                 weights=0.4)
-        proj = pynn.Projection(
+        pynn.Projection(
                 self.biasneurons,
                 self.neurons,
                 connector,
                 target='inhibitory',
-                rng=pynn.NativeRNG(42))
+                rng=pynn.NativeRNG(44))
 
         for ipre, ipost, w in weights:
             connector = pynn.AllToAllConnector(weights=1)
-            proj = pynn.Projection(
+            pynn.Projection(
                 self.neurons[ipre],
                 self.neurons[ipost],
                 connector,
                 target="excitatory"
             )
-
 
     def run(self):
         pynn.run(1)
@@ -93,12 +109,14 @@ class IsingNetwork(object):
 
         return weights
 
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--linearsize', '-l', default=5, type=int)
     parser.add_argument('--dimension', '-d', type=int, default=2)
-    parser.add_argument('--nbiasneurons', '-b', type=int, default=1)
-    parser.add_argument('--nsources', '-n', type=int, default=20)
+    parser.add_argument('--kbiasneurons', '-b', type=int, default=1)
+    parser.add_argument('--nbiasneurons', '-nb', type=int, default=1)
+    parser.add_argument('--nsources', '-n', type=int, default=500)
     parser.add_argument('--ksources', '-k', type=int, default=5)
     parser.add_argument('--sourcerate', '-r', type=float, default=20.)
     parser.add_argument('--duplicates', '-p', type=int, default=1)
@@ -107,13 +125,15 @@ def main():
 
     args = parser.parse_args()
 
-    taskname = "l{}_d{}_b{}_n{}_k{}_p{}_w{}".format(args.linearsize,
-                                                  args.dimension,
-                                                  args.nbiasneurons,
-                                                  args.nsources,
-                                                  args.ksources,
-                                                  args.duplicates,
-                                                  args.wafer)
+    taskname = "l{}_d{}_nb{}_b{}_n{}_k{}_p{}_w{}".format(
+                                                        args.linearsize,
+                                                        args.dimension,
+                                                        args.nbiasneurons,
+                                                        args.kbiasneurons,
+                                                        args.nsources,
+                                                        args.ksources,
+                                                        args.duplicates,
+                                                        args.wafer)
 
     marocco = pymarocco.PyMarocco()
     marocco.continue_despite_synapse_loss = True
@@ -128,6 +148,7 @@ def main():
                      linearsize=args.linearsize,
                      dimension=args.dimension,
                      nbiasneurons=args.nbiasneurons,
+                     kbiasneurons=args.kbiasneurons,
                      nsources=args.nsources,
                      ksources=args.ksources,
                      sourcerate=args.sourcerate,
@@ -149,42 +170,43 @@ def main():
     end = datetime.now()
 
     result = {
-        "model" : args.name,
-        "task" : taskname,
-        "timestamp" : datetime.now().isoformat(),
-        "results" : [
-            {"type" : "performance",
-             "name" : "setup_time",
-             "value" : (end-mid).total_seconds(),
-             "units" : "s",
-             "measure" : "time"
-         },
-            {"type" : "performance",
-             "name" : "total_time",
-             "value" : (end-start).total_seconds(),
-             "units" : "s",
-             "measure" : "time"
-         },
-            {"type" : "performance",
-             "name" : "synapses",
-             "value" : totsynapses
-         },
-            {"type" : "performance",
-             "name" : "neurons",
-             "value" : totneurons
-         },
-            {"type" : "performance",
-             "name" : "synapse_loss",
-             "value" : lostsynapses
-         },
-            {"type" : "performance",
-             "name" : "synapse_loss_after_l1",
-             "value" : lostsynapsesl1
-         }
+        "model": args.name,
+        "task": taskname,
+        "timestamp": datetime.now().isoformat(),
+        "results": [
+            {"type": "performance",
+             "name": "setup_time",
+             "value": (end-mid).total_seconds(),
+             "units": "s",
+             "measure": "time"
+             },
+            {"type": "performance",
+             "name": "total_time",
+             "value": (end-start).total_seconds(),
+             "units": "s",
+             "measure": "time"
+             },
+            {"type": "performance",
+             "name": "synapses",
+             "value": totsynapses
+             },
+            {"type": "performance",
+             "name": "neurons",
+             "value": totneurons
+             },
+            {"type": "performance",
+             "name": "synapse_loss",
+             "value": lostsynapses
+             },
+            {"type": "performance",
+             "name": "synapse_loss_after_l1",
+             "value": lostsynapsesl1
+             }
         ]
     }
 
-    with open("{}_{}_results.json".format(result["model"], result["task"]), 'w') as outfile:
+    with open("{}_{}_results.json".format(result["model"], result["task"]),
+              'w') as outfile:
         json.dump(result, outfile)
 
 if __name__ == '__main__':

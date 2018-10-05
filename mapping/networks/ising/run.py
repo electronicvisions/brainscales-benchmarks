@@ -39,8 +39,8 @@ class IsingNetwork(object):
         pynn.setup(marocco=self.marocco)
 
     def build(self):
-        weights  = self._create_nn_unit_weights(self.linearsize,
-                                                self.dimension)
+        weights = self._create_nn_unit_weights(self.linearsize,
+                                               self.dimension)
 
         self.neurons = [pynn.Population(1, self.model)
                         for _ in range(self.linearsize ** self.dimension)]
@@ -208,6 +208,7 @@ def main():
     with open("{}_{}_results.json".format(result["model"], result["task"]),
               'w') as outfile:
         json.dump(result, outfile)
+
 
 if __name__ == '__main__':
     r = main()

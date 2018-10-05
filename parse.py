@@ -23,24 +23,30 @@ def run(args):
     print(command)
     if useslurm:
         try:
-            subprocess.check_call(["srun", "-p", "jenkins", "python"] + command.split(" "))
+            subprocess.check_call(["srun", "-p", "jenkins", "python"] +
+                                  command.split(" "))
         except:
-            raise Exception('ERROR: {}: {}'.format(command, traceback.format_exc()))
+            raise Exception('ERROR: {}: {}'.format(
+                                                command,
+                                                traceback.format_exc()))
     else:
         try:
             subprocess.check_call(["python"] + command.split(" "))
         except:
-            raise Exception('ERROR: {}: {}'.format(command, traceback.format_exc()))
+            raise Exception('ERROR: {}: {}'.format(
+                                                command,
+                                                traceback.format_exc()))
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--useslurm', action='store_true', default=False)
 parser.add_argument('--multiprocessing', action='store_true', default=False)
 parser.add_argument('--processes', default=20, type=int,
                     help='Number of processes to spawn slurm jobs with, should'
-                        ' be larger than number of concurrent jenkins'
-                        ' slurm-jobs (at time of writing: 6). An increased'
-                        ' number does not particularly hurt, as the processes'
-                        ' will be blocked by the srun call anyways.')
+                         ' be larger than number of concurrent jenkins'
+                         ' slurm-jobs (at time of writing: 6). An increased'
+                         ' number does not particularly hurt, as the processes'
+                         ' will be blocked by the srun call anyways.')
 args = parser.parse_args()
 
 benchmarks = json.load(open("benchmarks.json", "r"))
@@ -73,4 +79,3 @@ for item in benchmarks:
 if args.multiprocessing:
     pool.map(run, argtuples)
     pool.close()
-

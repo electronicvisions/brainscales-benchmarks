@@ -10,8 +10,10 @@ import pymarocco
 from pysthal.command_line_util import init_logger
 init_logger("WARN", [])
 
+
 class rbmNetwork(object):
-    def __init__(self, Nvisible, Nhidden, marocco, model=pynn.EIF_cond_exp_isfa_ista):
+    def __init__(self, Nvisible, Nhidden, marocco,
+                 model=pynn.EIF_cond_exp_isfa_ista):
         self.Nvisible = Nvisible
         self.Nhidden = Nhidden
         self.model = model
@@ -33,21 +35,19 @@ class rbmNetwork(object):
         # This model only sets the skeleton of the BM without the noise sources
         connector = pynn.AllToAllConnector(weights=0.003,
                                            allow_self_connections=False)
-        projExcToHidden = pynn.Projection(self.neuronsVisible,
+        pynn.Projection(self.neuronsVisible,
                         self.neuronsHidden,
                         connector,
                         target='excitatory')
-        projInhToHidden = pynn.Projection(self.neuronsVisible,
+        pynn.Projection(self.neuronsVisible,
                         self.neuronsHidden,
                         connector,
                         target='inhibitory')
-        projExcToVisible = pynn.Projection(
-                        self.neuronsHidden,
+        pynn.Projection(self.neuronsHidden,
                         self.neuronsVisible,
                         connector,
                         target='excitatory')
-        projInhToVisible = pynn.Projection(
-                        self.neuronsHidden,
+        pynn.Projection(self.neuronsHidden,
                         self.neuronsVisible,
                         connector,
                         target='inhibitory')
@@ -56,22 +56,25 @@ class rbmNetwork(object):
         pynn.run(1)
         pynn.end()
 
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--N',  default=5000, type=int,
+    parser.add_argument('--N', default=5000, type=int,
                         help='The number of the neurons in the visible layer')
-    parser.add_argument('--Nhidden',  default=0, type=int,
-                        help='The number of the neurons in the hidden layer. If 0 or not specified then the number of hidden neurons equals the number of visible neurons.')
-    parser.add_argument('--name',  default="fullyVisibleBm_network", type=str)
+    parser.add_argument('--Nhidden', default=0, type=int,
+                        help='The number of the neurons in the hidden layer. '
+                             'If 0 or not specified then the number of hidden '
+                             'neurons equals the number of visible neurons.')
+    parser.add_argument('--name', default="fullyVisibleBm_network", type=str)
 
     args = parser.parse_args()
 
-    # If the number of hidden neurons is not specified then it should be equal to the number of visibel neurons
+    # If the number of hidden neurons is not specified then it should be equal
+    # to the number of visibel neurons
     if args.Nhidden == 0:
         args.Nhidden = args.N
 
-    taskname = "Nvisible{}_Nhidden{}".format(args.N,
-                                                 args.Nhidden)
+    taskname = "Nvisible{}_Nhidden{}".format(args.N, args.Nhidden)
 
     marocco = pymarocco.PyMarocco()
     marocco.continue_despite_synapse_loss = True
@@ -100,43 +103,45 @@ def main():
     end = datetime.now()
 
     result = {
-        "model" : args.name,
-        "task" : taskname,
-        "timestamp" : datetime.now().isoformat(),
-        "results" : [
-            {"type" : "performance",
-             "name" : "setup_time",
-             "value" : (end-mid).total_seconds(),
-             "units" : "s",
-             "measure" : "time"
-         },
-            {"type" : "performance",
-             "name" : "total_time",
-             "value" : (end-start).total_seconds(),
-             "units" : "s",
-             "measure" : "time"
-         },
-            {"type" : "performance",
-             "name" : "synapses",
-             "value" : totsynapses
-         },
-            {"type" : "performance",
-             "name" : "neurons",
-             "value" : totneurons
-         },
-            {"type" : "performance",
-             "name" : "synapse_loss",
-             "value" : lostsynapses
-         },
-            {"type" : "performance",
-             "name" : "synapse_loss_after_l1",
-             "value" : lostsynapsesl1
-         }
+        "model": args.name,
+        "task": taskname,
+        "timestamp": datetime.now().isoformat(),
+        "results": [
+            {"type": "performance",
+             "name": "setup_time",
+             "value": (end - mid).total_seconds(),
+             "units": "s",
+             "measure": "time"
+             },
+            {"type": "performance",
+             "name": "total_time",
+             "value": (end - start).total_seconds(),
+             "units": "s",
+             "measure": "time"
+             },
+            {"type": "performance",
+             "name": "synapses",
+             "value": totsynapses
+             },
+            {"type": "performance",
+             "name": "neurons",
+             "value": totneurons
+             },
+            {"type": "performance",
+             "name": "synapse_loss",
+             "value": lostsynapses
+             },
+            {"type": "performance",
+             "name": "synapse_loss_after_l1",
+             "value": lostsynapsesl1
+             }
         ]
     }
 
-    with open("{}_{}_results.json".format(result["model"], result["task"]), 'w') as outfile:
+    with open("{}_{}_results.json".format(result["model"], result["task"]),
+              'w') as outfile:
         json.dump(result, outfile)
+
 
 if __name__ == '__main__':
     main()

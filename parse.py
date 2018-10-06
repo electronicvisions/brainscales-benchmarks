@@ -7,13 +7,15 @@ import multiprocessing as mp
 import subprocess
 import traceback
 
-def run(args, useslurm=True):
+
+def run(args):
     """The args tuple needs to be formatted as follows:
     args[0]: tuple of values for the arguments
     args[1]: tuple of command line arguments
     args[2]: basecommand to call on the commandline with above arguments
-    args[3]: name of the mapping problem"""
-    argtuple, argnames, basecommand, name = args
+    args[3]: name of the mapping problem
+    args[4]: useslurm"""
+    argtuple, argnames, basecommand, name, useslurm = args
     argstr = " "
     for argname, argvalue in zip(argnames, argtuple):
         argstr += "{} {} ".format(argname, argvalue)
@@ -31,6 +33,7 @@ def run(args, useslurm=True):
             raise Exception('ERROR: {}: {}'.format(command, traceback.format_exc()))
 
 parser = argparse.ArgumentParser()
+parser.add_argument('--useslurm', action='store_true', default=False)
 parser.add_argument('--multiprocessing', action='store_true', default=False)
 parser.add_argument('--processes', default=20, type=int,
                     help='Number of processes to spawn slurm jobs with, should'
@@ -61,10 +64,11 @@ for item in benchmarks:
         argvalues.append(argumentvalues)
 
     if args.multiprocessing:
-        argtuples += [(at, argnames, basecommand, name) for at in it.product(*argvalues)]
+        argtuples += [(at, argnames, basecommand, name, args.useslurm)
+                      for at in it.product(*argvalues)]
     else:
         for argtuple in it.product(*argvalues):
-            run((argtuple, argnames, basecommand, name), False)
+            run((argtuple, argnames, basecommand, name, args.useslurm))
 
 if args.multiprocessing:
     pool.map(run, argtuples)

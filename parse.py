@@ -5,6 +5,7 @@ import itertools as it
 import json
 import multiprocessing as mp
 import subprocess
+import traceback
 
 def run(args, useslurm=True):
     """The args tuple needs to be formatted as follows:
@@ -19,9 +20,15 @@ def run(args, useslurm=True):
     command = basecommand + argstr + "--name {}".format(name)
     print(command)
     if useslurm:
-        subprocess.check_call(["srun", "-p", "jenkins", "python"] + command.split(" "))
+        try:
+            subprocess.check_call(["srun", "-p", "jenkins", "python"] + command.split(" "))
+        except:
+            raise Exception('ERROR: {}: {}'.format(command, traceback.format_exc()))
     else:
-        subprocess.check_call(["python"] + command.split(" "))
+        try:
+            subprocess.check_call(["python"] + command.split(" "))
+        except:
+            raise Exception('ERROR: {}: {}'.format(command, traceback.format_exc()))
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--multiprocessing', action='store_true', default=False)

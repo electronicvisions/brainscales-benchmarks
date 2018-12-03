@@ -18,7 +18,7 @@ ykeys_loss = ['synapse_loss', 'synapse_loss_after_l1']
 ykeys_time = ['setup_time', 'total_time']
 
 for jsfile in glob.glob('brainscales-benchmarks/*.json'):
-    if jsfile.startswith("benchmarks"):
+    if jsfile.endswith("benchmarks.json"):
         continue
     name, parameters = jsfile.split("_network_")
     name = name.split('/')[1]
@@ -47,19 +47,30 @@ for name in plotdata:
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.set_xlabel('#synapses')
-        ax.set_ylabel('percentage of lost synapses')
+        ax.set_ylabel('relative loss of synapses')
         for ykey in ykeys_loss:
-            ax.plot(pd['synapses'], pd[ykey], 'x', label=ykey)
+            lab = ykey
+            if ykey == "synapse_loss":
+                lab = "synapse_loss_total"
+            ax.plot(pd['synapses'], pd[ykey], 'x', label=lab)
         ax.legend()
+        ax.grid()
+        ax.set_ylim([0,1])
         plt.savefig(pdf, format='pdf')
 
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.set_xlabel('#neurons')
-        ax.set_ylabel('percentage of lost synapses')
+        ax.set_ylabel('relative loss of synapses')
+        ax.set_ylim([0,1])
         for ykey in ykeys_loss:
-            ax.plot(pd['neurons'], pd[ykey], 'x', label=ykey)
+            lab = ykey
+            if ykey == "synapse_loss":
+                lab = "synapse_loss_total"
+            ax.plot(pd['neurons'], pd[ykey], 'x', label=lab)
         ax.legend()
+        ax.grid()
+        ax.set_ylim([0,1])
         plt.savefig(pdf, format='pdf')
 
         fig = plt.figure()
@@ -69,6 +80,7 @@ for name in plotdata:
         for ykey in ykeys_time:
             ax.plot(pd['synapses'], pd[ykey], 'x', label=ykey)
         ax.legend()
+        ax.grid()
         plt.savefig(pdf, format='pdf')
 
         fig = plt.figure()
@@ -78,5 +90,6 @@ for name in plotdata:
         for ykey in ykeys_time:
             ax.plot(pd['neurons'], pd[ykey], 'x', label=ykey)
         ax.legend()
+        ax.grid()
         plt.savefig(pdf, format='pdf')
 

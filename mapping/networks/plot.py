@@ -11,17 +11,16 @@ import glob
 from collections import defaultdict
 
 
-data ={}
+data = {}
 
 xkeys = ['neurons', 'synapses']
 ykeys_loss = ['synapse_loss', 'synapse_loss_after_l1']
 ykeys_time = ['setup_time', 'total_time']
 
-for jsfile in glob.glob('brainscales-benchmarks/*.json'):
+for jsfile in glob.glob('*.json'):
     if jsfile.endswith("benchmarks.json"):
         continue
     name, parameters = jsfile.split("_network_")
-    name = name.split('/')[1]
     if name not in data:
         data[name] = defaultdict(list)
     with open(jsfile, 'r') as f:
@@ -43,7 +42,8 @@ for name in data.keys():
 for name in plotdata:
     pd = plotdata[name]
 
-    with PdfPages('{}_loss.pdf'.format(name)) as pdf:
+    pdfname = '{}_loss.pdf'.format(name)
+    with PdfPages(pdfname) as pdf:
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.set_xlabel('#synapses')
@@ -92,4 +92,5 @@ for name in plotdata:
         ax.legend()
         ax.grid()
         plt.savefig(pdf, format='pdf')
+    print("Saved results in {}".format(pdfname))
 

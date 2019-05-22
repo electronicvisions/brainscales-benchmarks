@@ -82,5 +82,29 @@
         "--N": [10, 12, 14, 18, 22, 26, 28, 30, 35, 40, 45]
       }
     }
+  },
+  {
+    "model": {
+      "name": "3layer_feedforward_network",
+      "description": "Mapping the skeleton of a fully connected feedforward network with 3 layers on the BrainScaleS wafer using default placement."
+    },
+    "tasks": {
+      "command": "mapping/networks/feedforward/run.py --conn_prob 1.0 --num_layers 3",
+      "arguments": {
+        "--neurons_per_layer": [5, 10, 15, 20, 30, 50, 100]
+      }
+    }
+  },
+  {
+    "model": {
+      "name": "2layer_feedforward_network",
+      "description": "Mapping the skeleton of a fully connected feedforward network with 2 layers on the BrainScaleS wafer using default placement."
+    },
+    "tasks": {
+      "command": "mapping/networks/feedforward/run.py --conn_prob 1.0 --num_layers 2",
+      "arguments": {
+        "--neurons_per_layer": [5, 10, 15, 20, 30, 50, 100]
+      }
+    }
   }
 ]

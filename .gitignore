@@ -1,0 +1,5 @@
+*.swp
+*.json
+!benchmark.json
+*.xml.gz
+*.pdf

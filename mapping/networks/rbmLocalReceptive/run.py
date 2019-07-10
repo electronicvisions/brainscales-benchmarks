@@ -84,20 +84,20 @@ class rbmLocalReceptiveFieldsNetwork(object):
         # the hidden layer and the label layer
         for outer in range(Nhidden):
             for inner in range(Nhidden):
-                pynn.Projection(hiddenPop[outer][outer],
+                pynn.Projection(hiddenPop[outer][inner],
                                 labelPop,
                                 connector,
                                 target='inhibitory')
-                pynn.Projection(hiddenPop[outer][outer],
+                pynn.Projection(hiddenPop[outer][inner],
                                 labelPop,
                                 connector,
                                 target='excitatory')
                 pynn.Projection(labelPop,
-                                hiddenPop[outer][outer],
+                                hiddenPop[outer][inner],
                                 connector,
                                 target='inhibitory')
                 pynn.Projection(labelPop,
-                                hiddenPop[outer][outer],
+                                hiddenPop[outer][inner],
                                 connector,
                                 target='excitatory')
 

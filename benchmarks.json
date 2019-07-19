@@ -1,8 +1,23 @@
 [
   {
     "model": {
-      "name": "random10_network",
-      "description": "mapping a random network with low connectivity on the BrainScaleS wafer"
+      "name": "cortical_column_network",
+      "description": "Mapping the column network with original connection probability and downscaled number of neurons."
+    },
+    "tasks": {
+      "command": "mapping/networks/cortical/run.py",
+      "arguments": {
+        "--scale": [ 0.005, 0.01, 0.02, 0.04, 0.06, 0.08, 0.1],
+        "--n_size": [8, 16],
+        "--placer": ["byNeuron", "byEnum"],
+        "--ignore_blacklisting": ["true", "false"]
+      }
+    }
+  },
+  {
+   "model": {
+   "name": "random10_network",
+   "description": "mapping a random network with low connectivity on the BrainScaleS wafer"
     },
     "tasks": {
       "command": "mapping/networks/random/run.py --prob 0.1",

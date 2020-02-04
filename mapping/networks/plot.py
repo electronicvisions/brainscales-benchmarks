@@ -4,6 +4,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import numpy as np
+import plotColumnInOnePlot
 
 import json
 import glob
@@ -21,6 +22,11 @@ for jsfile in glob.glob('*.json'):
     if jsfile.endswith("benchmarks.json"):
         continue
     name, parameters = jsfile.split("_network_")
+
+    # column is plotted in an extra plot
+    # TODO put multiple parameters in one nice plot
+    if "column" in name: continue
+
     if name not in data:
         data[name] = defaultdict(list)
     with open(jsfile, 'r') as f:
@@ -57,6 +63,7 @@ for name in plotdata:
         ax.grid()
         ax.set_ylim([0,1])
         plt.savefig(pdf, format='pdf')
+        plt.close()
 
         fig = plt.figure()
         ax = fig.add_subplot(111)
@@ -72,6 +79,7 @@ for name in plotdata:
         ax.grid()
         ax.set_ylim([0,1])
         plt.savefig(pdf, format='pdf')
+        plt.close()
 
         fig = plt.figure()
         ax = fig.add_subplot(111)
@@ -82,6 +90,7 @@ for name in plotdata:
         ax.legend()
         ax.grid()
         plt.savefig(pdf, format='pdf')
+        plt.close()
 
         fig = plt.figure()
         ax = fig.add_subplot(111)
@@ -92,5 +101,7 @@ for name in plotdata:
         ax.legend()
         ax.grid()
         plt.savefig(pdf, format='pdf')
+        plt.close()
     print("Saved results in {}".format(pdfname))
 
+plotColumnInOnePlot.main()

@@ -5,7 +5,7 @@ from datetime import datetime
 import json
 
 import pyhmf as pynn
-import Coordinate as C
+import pyhalco_hicann_v2 as C
 import pymarocco
 
 from pysthal.command_line_util import init_logger

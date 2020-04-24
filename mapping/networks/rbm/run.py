@@ -6,6 +6,8 @@ import json
 
 import pyhmf as pynn
 import pymarocco
+from pymarocco import Defects
+import pyhalco_hicann_v2 as C
 
 from pysthal.command_line_util import init_logger
 init_logger("WARN", [])
@@ -66,6 +68,8 @@ def main():
                              'If 0 or not specified then the number of hidden '
                              'neurons equals the number of visible neurons.')
     parser.add_argument('--name', default="fullyVisibleBm_network", type=str)
+    parser.add_argument('--defects_path', type=str)
+    parser.add_argument('--wafer', '-w', type=int, default=33)
 
     args = parser.parse_args()
 
@@ -74,13 +78,22 @@ def main():
     if args.Nhidden == 0:
         args.Nhidden = args.N
 
-    taskname = "Nvisible{}_Nhidden{}".format(args.N, args.Nhidden)
+    taskname = "Nvisible{}_Nhidden{}_wafer{}".format(args.N, args.Nhidden, args.wafer)
 
     marocco = pymarocco.PyMarocco()
     marocco.continue_despite_synapse_loss = True
     marocco.calib_backend = pymarocco.PyMarocco.CalibBackend.Default
     marocco.calib_path = "/wang/data/calibration/brainscales/default"
-    marocco.defects_path = "/wang/data/calibration/brainscales/default"
+    marocco.default_wafer = C.Wafer(args.wafer)
+    marocco.defects.backend = Defects.Backend.XML
+
+    if args.defects_path:
+        marocco.neuron_placement.skip_hicanns_without_neuron_blacklisting(False)
+        marocco.defects.path = args.defects_path
+    else:
+        marocco.defects.path = "/wang/data/commissioning/BSS-1/rackplace/" + str(
+            args.wafer) + "/derived_plus_calib_blacklisting/current"
+
     marocco.persist = "results_{}_{}.xml.gz".format(args.name, taskname)
 
     start = datetime.now()

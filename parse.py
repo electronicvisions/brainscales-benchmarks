@@ -7,7 +7,6 @@ import multiprocessing as mp
 import subprocess
 import traceback
 
-
 def run(args):
     """The args tuple needs to be formatted as follows:
     args[0]: tuple of values for the arguments
@@ -20,7 +19,7 @@ def run(args):
     for argname, argvalue in zip(argnames, argtuple):
         argstr += "{} {} ".format(argname, argvalue)
     command = basecommand + argstr + "--name {}".format(name)
-    print(command)
+    print("____________command: ", command)
     if useslurm:
         try:
             subprocess.check_call(["srun", "-p", "jenkins", "python"] +
@@ -47,8 +46,9 @@ parser.add_argument('--processes', default=20, type=int,
                          ' slurm-jobs (at time of writing: 6). An increased'
                          ' number does not particularly hurt, as the processes'
                          ' will be blocked by the srun call anyways.')
+parser.add_argument('--global_defects_path', type=str)
+parser.add_argument('--global_wafer', type=int)
 args = parser.parse_args()
-
 benchmarks = json.load(open("benchmarks.json", "r"))
 
 if args.multiprocessing:
@@ -65,9 +65,24 @@ for item in benchmarks:
     arguments = item['tasks']['arguments']
     argnames = []
     argvalues = []
+
     for argumentname, argumentvalues in arguments.items():
+        if("--defects_path" in argumentname and args.global_defects_path):
+            continue
+        if("--wafer" in argumentname and args.global_wafer):
+            continue
         argnames.append(argumentname)
         argvalues.append(argumentvalues)
+
+    # overwrites defects_path with global_defects_path
+    if args.global_defects_path:
+        argnames.append("--defects_path")
+        argvalues.append([args.global_defects_path])
+
+    # overwrites --wafer with --global_wafer
+    if(args.global_wafer):
+        argnames.append("--wafer")
+        argvalues.append([args.global_wafer])
 
     if args.multiprocessing:
         argtuples += [(at, argnames, basecommand, name, args.useslurm)

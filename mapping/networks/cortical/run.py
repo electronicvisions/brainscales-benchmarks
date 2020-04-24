@@ -246,10 +246,11 @@ def main():
     marocco.calib_backend = PyMarocco.CalibBackend.Default
     marocco.calib_path = "/wang/data/calibration/brainscales/default"
 
-    if args.defects_path :
+    if args.defects_path:
         marocco.defects.path = args.defects_path
     else:
-        marocco.defects.path = "/wang/data/commissioning/BSS-1/rackplace/" + str(args.wafer) + "/digital_blacklisting/current"
+        marocco.defects.path = "/wang/data/commissioning/BSS-1/rackplace/" + str(
+            args.wafer) + "/derived_plus_calib_blacklisting/current"
 
     # c 4189 no specification
     #taskname += "_c4189_"

@@ -7,6 +7,7 @@ import json
 import pyhmf as pynn
 import pyhalco_hicann_v2 as C
 import pymarocco
+from pymarocco import Defects
 
 from pysthal.command_line_util import init_logger
 init_logger("WARN", [])
@@ -122,6 +123,7 @@ def main():
     parser.add_argument('--duplicates', '-p', type=int, default=1)
     parser.add_argument('--wafer', '-w', type=int, default=33)
     parser.add_argument('--name', type=str, default='ising_network')
+    parser.add_argument('--defects_path', type=str)
 
     args = parser.parse_args()
 
@@ -140,7 +142,15 @@ def main():
     marocco.calib_backend = pymarocco.PyMarocco.CalibBackend.Default
     marocco.default_wafer = C.Wafer(args.wafer)
     marocco.calib_path = "/wang/data/calibration/brainscales/default"
-    marocco.defects_path = "/wang/data/calibration/brainscales/default"
+    marocco.defects.backend = Defects.Backend.XML
+
+    if args.defects_path:
+        marocco.neuron_placement.skip_hicanns_without_neuron_blacklisting(False)
+        marocco.defects.path = args.defects_path
+    else:
+        marocco.defects.path = "/wang/data/commissioning/BSS-1/rackplace/" + str(
+            args.wafer) + "/derived_plus_calib_blacklisting/current"
+
     marocco.persist = "results_{}_{}.xml.gz".format(args.name, taskname)
 
     start = datetime.now()

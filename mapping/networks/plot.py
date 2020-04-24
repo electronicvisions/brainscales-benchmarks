@@ -24,7 +24,6 @@ for jsfile in glob.glob('*.json'):
     name, parameters = jsfile.split("_network_")
 
     # column is plotted in an extra plot
-    # TODO put multiple parameters in one nice plot
     if "column" in name: continue
 
     if name not in data:

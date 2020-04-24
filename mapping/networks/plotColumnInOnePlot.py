@@ -114,9 +114,12 @@ def plotLossPerConnection(experiments):
                 plt.xticks(fontsize=8, rotation=90)
                 plt.legend()
                 plt.ylabel("Amount of Synapses")
-                plt.title("Placer: "+ experiment["placer"] + " Scale: "+ str(100 * experiment["scale"]) +"% Neuron Size: "+ str(
-                    experiment["n_size"]) + " Wafer: " + str(experiment['wafer']) +" \n Realized and Lost Synapses ordered by the " +
-                        sorting + " Population", pad = 20, fontdict = {"fontsize": 14})
+
+                title = "Placer: "+ experiment["placer"] + " Scale: "+ str(100 * experiment["scale"]) +"% Neuron Size: "+ str(
+                        experiment["n_size"]) + (" without blacklisting " if experiment["ignore_blacklisting"] else " Wafer: " + str(
+                            experiment['wafer'])) + " \n Realized and Lost Synapses ordered by the " + sorting + " Population"
+
+                plt.title(title, pad = 20, fontdict = {"fontsize": 14})
 
                 plt.savefig(pdf, format='pdf')
                 plt.close()
@@ -156,6 +159,8 @@ def main():
             thisRun["perPopulation"] = exper["perPopulation"]
         experiments.append(thisRun)
 
-    experiments = sorted(experiments, key=lambda elem: "%s %s %s %s" % (elem['placer'], elem['wafer'],elem['n_size'],elem['scale']))
+    # Sorting
+    experiments = sorted(experiments, key=lambda elem: "%s %s %s %s %s" % (elem['placer'], elem['wafer'],elem['n_size'],
+        elem['scale'],elem['ignore_blacklisting']))
     plotTotalLoss(experiments)
     plotLossPerConnection(experiments)

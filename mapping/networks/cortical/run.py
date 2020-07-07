@@ -237,7 +237,6 @@ def main():
         marocco.defects.backend = Defects.Backend.XML
 
 
-    marocco.neuron_placement.skip_hicanns_without_neuron_blacklisting(False)
     marocco.skip_mapping = False
     marocco.backend = PyMarocco.None
 

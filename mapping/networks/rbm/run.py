@@ -88,7 +88,6 @@ def main():
     marocco.defects.backend = Defects.Backend.XML
 
     if args.defects_path:
-        marocco.neuron_placement.skip_hicanns_without_neuron_blacklisting(False)
         marocco.defects.path = args.defects_path
     else:
         marocco.defects.path = "/wang/data/commissioning/BSS-1/rackplace/" + str(

@@ -121,7 +121,7 @@ def main():
     parser.add_argument('--ksources', '-k', type=int, default=5)
     parser.add_argument('--sourcerate', '-r', type=float, default=20.)
     parser.add_argument('--duplicates', '-p', type=int, default=1)
-    parser.add_argument('--wafer', '-w', type=int, default=33)
+    parser.add_argument('--wafer', '-w', type=int, default=24)
     parser.add_argument('--name', type=str, default='ising_network')
     parser.add_argument('--defects_path', type=str)
 

@@ -69,7 +69,7 @@ def main():
                              'neurons equals the number of visible neurons.')
     parser.add_argument('--name', default="fullyVisibleBm_network", type=str)
     parser.add_argument('--defects_path', type=str)
-    parser.add_argument('--wafer', '-w', type=int, default=33)
+    parser.add_argument('--wafer', '-w', type=int, default=24)
 
     args = parser.parse_args()
 

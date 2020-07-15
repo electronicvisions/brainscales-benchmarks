@@ -56,7 +56,7 @@ def main():
     parser.add_argument('--neurons_per_layer', default=200, type=int)
     parser.add_argument('--name', default="feedforward_layered_network", type=str)
     parser.add_argument('--defects_path', type=str)
-    parser.add_argument('--wafer', '-w', type=int, default=33)
+    parser.add_argument('--wafer', '-w', type=int, default=24)
 
     args = parser.parse_args()
 

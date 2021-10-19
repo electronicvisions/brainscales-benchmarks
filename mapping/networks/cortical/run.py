@@ -105,7 +105,7 @@ class CorticalNetwork(object):
                     continue
 
                 # connection matrix [(neuron_pop1,neuron_pop2,weight,delay),(...)]
-                matrix = np.zeros((4, n_connection),dtype= int)
+                matrix = np.zeros((4, n_connection),dtype= float)
                 np.random.seed(self.seed)
                 matrix[0] = np.random.randint(0, sourceSize, n_connection)
                 matrix[1] = np.random.randint(0, targetSize, n_connection)
@@ -115,6 +115,7 @@ class CorticalNetwork(object):
                 matrix[2] = np.repeat(1, n_connection) # arbitrary weight
                 matrix[3] = np.repeat(0, n_connection) # arbitrary delay
                 matrix = matrix.T
+                matrix = [[int(a),int(b),c,d] for a,b,c,d in matrix]
                 connector = pynn.FromListConnector(matrix)
 
                 self.projections.append(pynn.Projection(
@@ -182,7 +183,7 @@ class CorticalNetwork(object):
         realized = len(realized_syns[0])
         if orig > 0:
 
-            print "Projection-Wise Synapse Loss", proj, (orig - realized) * 100. / orig
+            print ("Projection-Wise Synapse Loss", proj, (orig - realized) * 100. / orig)
         return orig - realized, orig
 
 def str2bool(v):
@@ -232,13 +233,13 @@ def main():
     marocco.neuron_placement.default_neuron_size(args.n_size)
 
     if(args.ignore_blacklisting):
-        marocco.defects.backend = Defects.Backend.None
+        marocco.defects.backend = Defects.Backend.Without
     else:
         marocco.defects.backend = Defects.Backend.XML
 
 
     marocco.skip_mapping = False
-    marocco.backend = PyMarocco.None
+    marocco.backend = PyMarocco.Without
 
     marocco.continue_despite_synapse_loss = True
     marocco.default_wafer = C.Wafer(args.wafer)  # give wafer args
